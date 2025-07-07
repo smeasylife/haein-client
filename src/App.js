@@ -1,14 +1,18 @@
-import React, { useState } from "react";
-import ProductCard from "./components/ProductCard";
+import React, { useState } from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import ProductCard from './components/ProductCard';
 import HamburgerMenu from './components/HamburgerMenu';
-import Navbar from "./components/NavBar.js";
-import products from "./products.js";
-import "./styles/App.css"; 
+import Navbar from './components/NavBar';
+import LoginPage from './pages/LoginPage';
+import products from './products';
+import './styles/App.css';
 
-function App() {
+export default function App() {
   const [menuOpen, setMenuOpen] = useState(false);
   const menuItems = ['NEW', 'BEST', 'SALE', '봄/가을', '여름', '겨울'];
-  return (
+
+  // 홈페이지 메인 콘텐츠를 렌더링하는 컴포넌트
+  const Home = () => (
     <main className="min-h-screen bg-white px-6 pt-20 pb-10">
       <Navbar onBurgerClick={() => setMenuOpen(true)} />
       <HamburgerMenu
@@ -31,6 +35,13 @@ function App() {
       </section>
     </main>
   );
-}
 
-export default App;
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<LoginPage />} />
+      </Routes>
+    </BrowserRouter>
+  );
+}

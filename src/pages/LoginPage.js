@@ -1,5 +1,4 @@
 import React from 'react';
-
 export default function LoginPage() {
   return (
     <div className="min-h-screen bg-gray-50">
@@ -27,7 +26,7 @@ export default function LoginPage() {
             className="w-full flex items-center justify-center bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-medium px-4 py-2 rounded mb-4"
           >
             <img
-              src="/assets/kakao_logo.png"
+              src="/assets/kakao-logo.jpg"
               alt="Kakao"
               className="w-5 h-5 mr-2"
             />
@@ -50,7 +49,7 @@ export default function LoginPage() {
               <input
                 id="userId"
                 type="text"
-                className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                className="w-full border border-gray-300 rounded px-3 py-2"
                 placeholder="아이디를 입력하세요"
               />
             </div>
@@ -61,7 +60,7 @@ export default function LoginPage() {
               <input
                 id="password"
                 type="password"
-                className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                className="w-full border border-gray-300 rounded px-3 py-2"
                 placeholder="비밀번호를 입력하세요"
               />
             </div>

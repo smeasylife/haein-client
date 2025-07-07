@@ -1,8 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { AnimatePresence, motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 
 export default function HamburgerMenu({ isOpen, onClose, menuItems }) {
+    const navigate = useNavigate();
   return (
     <AnimatePresence initial={false}>
       {isOpen && (
@@ -34,7 +36,10 @@ export default function HamburgerMenu({ isOpen, onClose, menuItems }) {
             </button>
                       
             <button
-              onClick={() => window.location.href = '/login'}
+                onClick={() => {
+                    onClose();
+                    navigate('/login');
+                }}
               className="w-full bg-black text-white font-medium py-2 rounded mb-4"
             >
               로그인
