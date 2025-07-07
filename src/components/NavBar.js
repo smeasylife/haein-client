@@ -5,16 +5,16 @@ import {
   ShoppingBagIcon,
 } from '@heroicons/react/24/outline';
 
-const categories = [':)', 'NEW 7%', 'BEST 30', 'SET-UP', 'OUTER', 'TOP', 'BOTTOM', 'ACC'];
+const categories = ['NEW', 'BEST', 'SALE', '봄/가을', '여름', '겨울'];
 
-export default function Navbar() {
+export default function Navbar({ onBurgerClick }) {
   return (
     <header className="fixed top-0 left-0 w-full z-50">
       {/* Top Bar */}
       <div className="bg-white text-black">
         <div className="flex justify-between items-center w-full px-4 py-0">
           {/* Hamburger */}
-          <button className="p-2 focus:outline-none">
+          <button className="p-2 focus:outline-none" onClick={onBurgerClick}>
             <Bars3Icon className="h-6 w-6" />
           </button>
           {/* Logo */}
@@ -33,7 +33,7 @@ export default function Navbar() {
 
       {/* Category Bar */}
       <div className="bg-white backdrop-blur-sm">
-        <nav className="flex space-x-6 w-full px-4 py-1 overflow-x-auto">
+        <nav className="flex justify-center space-x-6 w-full px-4 py-1 overflow-x-auto">
           {categories.map((item) => (
             <button
               key={item}
