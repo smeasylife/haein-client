@@ -1,5 +1,31 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { initKakao, loginWithKakao, fetchKakaoProfile } from '../utils/kakao';
+import { useNavigate } from 'react-router-dom';
+
 export default function LoginPage() {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    initKakao(); // SDK 초기화
+  }, []);
+
+  const handleKakaoLogin = async () => {
+    try {
+      const authObj = await loginWithKakao();
+      // authObj.access_token 을 백엔드로 전달해 회원가입/로그인 처리
+      // 예: await api.post('/auth/kakao', { token: authObj.access_token });
+
+      // (선택) 프론트에서 바로 프로필 정보 조회
+      const profile = await fetchKakaoProfile();
+      console.log('카카오 사용자 프로필', profile);
+
+      // 로그인 성공 후 메인 페이지로 이동
+      navigate('/');
+    } catch (err) {
+      console.error('카카오 로그인 실패', err);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -23,6 +49,7 @@ export default function LoginPage() {
 
           {/* Social Login */}
           <button
+            onClick={handleKakaoLogin}
             className="w-full flex items-center justify-center bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-medium px-4 py-2 rounded mb-4"
           >
             <img
