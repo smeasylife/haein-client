@@ -1,6 +1,8 @@
 import React, { useEffect } from 'react';
 import { initKakao, loginWithKakao, fetchKakaoProfile } from '../utils/kakao';
 import { useNavigate } from 'react-router-dom';
+import kakao from '../assets/kakao.jpg';
+import '../styles/kakao.css';
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -8,6 +10,7 @@ export default function LoginPage() {
   useEffect(() => {
     initKakao(); // SDK 초기화
   }, []);
+  console.log(kakao);
 
   const handleKakaoLogin = async () => {
     try {
@@ -48,17 +51,11 @@ export default function LoginPage() {
           <h2 className="text-2xl font-semibold text-center text-gray-800 mb-6">로그인</h2>
 
           {/* Social Login */}
-          <button
-            onClick={handleKakaoLogin}
-            className="w-full flex items-center justify-center bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-medium px-4 py-2 rounded mb-4"
-          >
-            <img
-              src="/assets/kakao-logo.jpg"
-              alt="Kakao"
-              className="w-5 h-5 mr-2"
-            />
-            카카오로 로그인
+          <button className="kakao-btn-bg" onClick={handleKakaoLogin}>
+          카카오로 로그인
           </button>
+
+          
 
           {/* Divider */}
           <div className="flex items-center my-4">
@@ -103,7 +100,23 @@ export default function LoginPage() {
           <div className="flex justify-between text-sm text-gray-500 mt-4">
             <button className="hover:text-gray-700">아이디 찾기</button>
             <button className="hover:text-gray-700">비밀번호 찾기</button>
-            <button className="hover:text-gray-700">회원가입</button>
+          </div>
+          <div className="mt-6">
+          <button
+           onClick={() => navigate('/signup')}
+            className="
+            w-full
+            bg-white text-black
+            border border-gray-300
+            font-medium
+            py-2
+            rounded-lg
+            hover:bg-gray-100
+            transition-colors duration-150
+            "
+          >
+          회원가입
+          </button>
           </div>
         </div>
       </main>

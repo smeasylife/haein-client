@@ -4,6 +4,7 @@ import ProductCard from './components/ProductCard';
 import HamburgerMenu from './components/HamburgerMenu';
 import Navbar from './components/NavBar';
 import LoginPage from './pages/LoginPage';
+import SignUpPage from './pages/SignUp';
 import products from './products';
 import './styles/App.css';
 
@@ -41,6 +42,7 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/signup" element={<SignUpPage/>} />
       </Routes>
     </BrowserRouter>
   );

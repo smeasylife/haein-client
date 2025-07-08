@@ -1,6 +1,5 @@
 export function initKakao() {
     if (window.Kakao && !window.Kakao.isInitialized()) {
-    console.log("App Key:" + process.env.REACT_APP_KAKAO_JS_KEY)
     window.Kakao.init(process.env.REACT_APP_KAKAO_JS_KEY);
   }
 }

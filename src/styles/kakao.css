@@ -1,0 +1,20 @@
+/* styles.css */
+.kakao-btn-bg {
+  position: relative;
+  display: inline-block;
+  background-color: #FEE500;
+  color: #191919;
+  border: none;
+  border-radius: 4px;
+  height: 48px;
+  padding: 0px 145px; /* 로고만큼 왼쪽 패딩 추가 */
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  
+  /* 여기서 로고를 배경으로 깔아요 */
+  background-image: url('../assets/kakao.jpg');
+  background-repeat: no-repeat;
+  background-position: 16px center; /* 버튼 왼쪽에서 16px 떨어진 세로 중앙 */
+  background-size: 60px 50px;
+}
