@@ -1,16 +1,22 @@
 /* styles.css */
 .kakao-btn-bg {
   position: relative;
-  display: inline-block;
+  align-items: center;
+  display: inline-flex;
   background-color: #FEE500;
   color: #191919;
   border: none;
+  width: 100%;  
+  max-width: 360px; 
   border-radius: 4px;
   height: 48px;
-  padding: 0px 145px; /* 로고만큼 왼쪽 패딩 추가 */
+  padding: 0px 110px; /* 로고만큼 왼쪽 패딩 추가 */
   font-size: 16px;
   font-weight: 500;
   cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  box-sizing: border-box;
   
   /* 여기서 로고를 배경으로 깔아요 */
   background-image: url('../assets/kakao.jpg');
