@@ -6,6 +6,7 @@ import Navbar from './components/NavBar';
 import LoginPage from './pages/LoginPage';
 import SignUpPage from './pages/SignUp';
 import products from './products';
+import ProductDetail from './pages/ProductDetail';
 import './styles/App.css';
 
 export default function App() {
@@ -26,6 +27,7 @@ export default function App() {
           {products.map((product, idx) => (
             <ProductCard
               key={idx}
+              index={idx}
               image={product.image}
               name={product.name}
               price={product.price}
@@ -42,7 +44,8 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<LoginPage />} />
-        <Route path="/signup" element={<SignUpPage/>} />
+        <Route path="/signup" element={<SignUpPage />} />
+        <Route path="/product/:id" element={<ProductDetail />} />
       </Routes>
     </BrowserRouter>
   );

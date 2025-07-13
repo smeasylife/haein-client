@@ -1,37 +1,45 @@
 import React from "react";
 import PropTypes from "prop-types";
+import { Link } from 'react-router-dom';
 
-function ProductCard({ image, name, price, colors }) {
+function ProductCard({ image, name, price, colors, index }) {
   return (
-    <div className="flex flex-col bg-white rounded-xl shadow overflow-hidden">
-      {/* 1) 4:5 비율, 2) 컨테이너 라운딩 제거 */}
-      <div className="aspect-[4/5] w-full overflow-hidden bg-gray-100">
-        <img
-          src={image}
-          alt={name}
-          className="w-full h-full object-cover"
-        />
-      </div>
-
-      <div className="p-4 flex-1 flex flex-col justify-between">
-        <div>
-          <h2 className="text-base font-medium text-gray-900">{name}</h2>
-          <p className="mt-1 text-sm text-gray-600">{price.toLocaleString()}원</p>
+    <Link to={`/product/${index}`} className="block">
+      <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition flex flex-col h-80">
+        {/* 이미지 영역: flex 비율 7 */}
+        <div className="flex-[8]">
+          <img
+            src={image}
+            alt={name}
+            className="w-full h-full object-cover"
+          />
         </div>
 
-        {colors && colors.length > 0 && (
-          <div className="flex gap-1 mt-2">
-            {colors.map((color, idx) => (
+        {/* 정보 영역: flex 비율 3 + 위아래 고르게 배치 */}
+        <div className="p-3 flex-[2] flex flex-col justify-between">
+          {/* 상품명: 한 줄 말줄임 */}
+          <h3 className="text-sm font-semibold text-gray-800 truncate">
+            {name}
+          </h3>
+
+          {/* 가격 */}
+          <p className="text-xs text-gray-600">
+            {price.toLocaleString()}원
+          </p>
+
+          {/* 색상 표시 */}
+          <div className="flex space-x-1 mt-1">
+            {colors.map((c, i) => (
               <span
-                key={idx}
-                className="inline-block w-3 h-3 rounded-full border border-gray-200"
-                style={{ backgroundColor: color }}
+                key={i}
+                className="w-4 h-4 rounded-full border"
+                style={{ backgroundColor: c }}
               />
             ))}
           </div>
-        )}
+        </div>
       </div>
-    </div>
+    </Link>
   );
 }
 
