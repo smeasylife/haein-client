@@ -15,26 +15,28 @@ export default function App() {
 
   // 홈페이지 메인 콘텐츠를 렌더링하는 컴포넌트
   const Home = () => (
-    <main className="min-h-screen bg-white px-6 pt-20 pb-10">
+    <main className="min-h-screen bg-white pt-20 pb-10">
+      <section className="max-w-screen-lg mx-auto px-3 pt-3 pb-10">
       <Navbar onBurgerClick={() => setMenuOpen(true)} />
       <HamburgerMenu
         isOpen={menuOpen}
         onClose={() => setMenuOpen(false)}
         menuItems={menuItems}
       />
-      <section className="max-w-5xl mx-auto">
-        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-6">
-          {products.map((product, idx) => (
-            <ProductCard
-              key={idx}
-              index={idx}
-              image={product.image}
-              name={product.name}
-              price={product.price}
-              colors={product.colors}
-            />
-          ))}
-        </div>
+
+      {/* 기본 2열, md부터 3열 */}
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-6 items-start">
+        {products.map((product, idx) => (
+        <ProductCard
+          key={idx}
+          index={idx}
+         image={product.image}
+         name={product.name}
+          price={product.price}
+          colors={product.colors}
+       />
+      ))}
+      </div>
       </section>
     </main>
   );
