@@ -19,9 +19,9 @@ export default function SignupPage() {
         <div className="max-w-5xl mx-auto flex items-center justify-between px-4 py-3">
           <button
             onClick={() => navigate('/')}
-            className="text-gray-700 hover:text-gray-900 font-medium"
+            className="text-gray-700 hover:text-gray-900 font-medium text-2xl leading-none"
           >
-            ← 메인으로
+            ← 
           </button>
           <h1 className="text-lg font-bold text-gray-900">HAEIN</h1>
           <div className="w-24" /> {/* 중앙정렬용 빈 박스 */}
