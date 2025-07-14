@@ -4,6 +4,10 @@ import { useParams, useNavigate } from 'react-router-dom';
 import products from '../products';
 import HamburgerMenu from '../components/HamburgerMenu';
 import Navbar from '../components/NavBar';
+import DetailTab from '../components/DetailTab';
+import InfoTab from '../components/InfoTab';
+import QnATab from '../components/QnATab';
+import ReviewTab from '../components/ReviewTab';
 
 export default function ProductDetail() {
   const { id } = useParams();
@@ -12,6 +16,7 @@ export default function ProductDetail() {
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
   const menuItems = ['NEW', 'BEST', 'SALE', '봄/가을', '여름', '겨울'];
+  const [activeTab, setActiveTab] = useState('detail');
 
   // 제품 객체에 아래 필드를 추가해 주세요:
   // description: string[]
@@ -49,6 +54,12 @@ export default function ProductDetail() {
   '세탁 방법: 단독 찬물 세탁 권장'],
     model = '침구 촬영 이미지 기준 퀸(Q) 사이즈를 사용하였습니다.',
   } = product;
+
+  const detailImages = product.detailImages || [product.image];
+  const shippingInfo = product.shippingInfo || '결제 확인 후 1~2일 이내 발송됩니다.';
+  const contactInfo  = product.contactInfo  || 'cs@haein.co.kr';
+  const qnaList      = product.qnaList      || [];
+  const reviewList   = product.reviewList   || [];
 
   return (
     <main className="min-h-screen bg-white px-4 md:px-8 pt-20 pb-10">
@@ -153,6 +164,34 @@ export default function ProductDetail() {
               구매하기
             </button>
           </div>
+        </div>
+      </div>
+      <div className="max-w-screen-lg mx-auto mt-10">
+        <div className="flex border-b">
+          {[
+            { key: 'detail', label: 'DETAIL' },
+            { key: 'info',   label: 'INFO' },
+            { key: 'qna',    label: `Q&A (${qnaList.length})` },
+            { key: 'review', label: `REVIEW (${reviewList.length})` },
+          ].map(tab => (
+            <button
+              key={tab.key}
+              onClick={() => setActiveTab(tab.key)}
+              className={`flex-1 py-3 text-center text-sm font-medium
+                ${activeTab === tab.key
+                  ? 'text-gray-900 border-b-2 border-black'
+                  : 'text-gray-500 hover:text-gray-700'}`}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+
+        <div className="mt-6">
+          {activeTab === 'detail' && <DetailTab images={detailImages} />}
+          {activeTab === 'info'   && <InfoTab   shipping={shippingInfo} contact={contactInfo} />}
+          {activeTab === 'qna'    && <QnATab    qnaList={qnaList} />}
+          {activeTab === 'review' && <ReviewTab reviews={reviewList} />}
         </div>
       </div>
     </main>
