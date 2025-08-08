@@ -32,6 +32,7 @@ export default function App() {
           index={idx}
          image={product.image}
          name={product.name}
+         originalPrice={product.originalPrice}
           price={product.price}
           colors={product.colors}
        />

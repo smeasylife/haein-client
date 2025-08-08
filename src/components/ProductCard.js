@@ -2,13 +2,15 @@ import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { Link } from 'react-router-dom';
 
-function ProductCard({ image, name, price, colors, index }) {
+function ProductCard({ image, name, originalPrice, price, colors, index }) {
   const [liked, setLiked] = useState(false);
 
   const toggleLike = (e) => {
     e.preventDefault(); // 링크 이동 방지
     setLiked(!liked);
   };
+
+  const discountRate = originalPrice ? Math.round(((originalPrice - price) / originalPrice) * 100) : 0;
 
   return (
     <Link to={`/product/${index}`} className="block">
@@ -42,23 +44,35 @@ function ProductCard({ image, name, price, colors, index }) {
         </div>
 
         {/* 정보 영역: flex 비율 3 + 위아래 고르게 배치 */}
-        <div className="p-3 flex-[2] flex flex-col justify-between">
+        <div className="p-2 flex-[2] flex flex-col justify-between">
           {/* 상품명: 한 줄 말줄임 */}
-          <h3 className="text-sm font-semibold text-gray-800 truncate">
+          <h3 className="text-xs font-semibold text-gray-700 truncate">
             {name}
           </h3>
 
           {/* 가격 */}
-          <p className="text-xs text-gray-600">
-            {price.toLocaleString()}원
-          </p>
+          <div className="mt-1 flex items-center space-x-1">
+            {discountRate > 0 && (
+              <p className="text-sm font-bold text-red-500">
+                {discountRate}%
+              </p>
+            )}
+            <p className="text-sm font-bold text-gray-800">
+              {price.toLocaleString()}원
+            </p>
+            {originalPrice && (
+              <p className="text-xs text-gray-400 line-through">
+                {originalPrice.toLocaleString()}원
+              </p>
+            )}
+          </div>
 
           {/* 색상 표시 */}
           <div className="flex space-x-1 mt-1">
             {colors.map((c, i) => (
               <span
                 key={i}
-                className="w-4 h-4 rounded-full border"
+                className="w-3 h-3 rounded-full border"
                 style={{ backgroundColor: c }}
               />
             ))}
@@ -72,6 +86,7 @@ function ProductCard({ image, name, price, colors, index }) {
 ProductCard.propTypes = {
   image: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
+  originalPrice: PropTypes.number,
   price: PropTypes.number.isRequired,
   colors: PropTypes.arrayOf(PropTypes.string),
   index: PropTypes.number.isRequired,
