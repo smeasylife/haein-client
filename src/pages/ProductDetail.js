@@ -1,5 +1,6 @@
 // src/pages/ProductDetail.js
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
+import { CartContext } from '../context/CartContext';
 import { useParams, useNavigate } from 'react-router-dom';
 import products from '../products';
 import HamburgerMenu from '../components/HamburgerMenu';
@@ -10,6 +11,7 @@ import QnATab from '../components/QnATab';
 import ReviewTab from '../components/ReviewTab';
 
 export default function ProductDetail() {
+  const { addToCart } = useContext(CartContext);
   const { id } = useParams();
   const idx = parseInt(id, 10);
   const product = products[idx];
@@ -153,7 +155,10 @@ export default function ProductDetail() {
           <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-4">
             <button
               className="w-full py-3 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition"
-              onClick={() => alert('장바구니에 담기 로직을 여기에…')}
+              onClick={() => {
+                addToCart(product);
+                alert(`${product.name}이(가) 장바구니에 담겼습니다.`);
+              }}
             >
               장바구니 담기
             </button>

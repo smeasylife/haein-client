@@ -25,9 +25,9 @@ export default function Navbar({ onBurgerClick }) {
             <button className="p-2 focus:outline-none">
               <MagnifyingGlassIcon className="h-6 w-6" />
             </button>
-            <button className="p-2 focus:outline-none">
+            <Link to="/cart" className="p-2 focus:outline-none">
               <ShoppingBagIcon className="h-6 w-6" />
-            </button>
+            </Link>
           </div>
         </div>
       </div>
