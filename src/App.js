@@ -7,6 +7,7 @@ import LoginPage from './pages/LoginPage';
 import SignUpPage from './pages/SignUp';
 import products from './products';
 import ProductDetail from './pages/ProductDetail';
+import QnAWritePage from './pages/QnAWritePage';
 import './styles/App.css';
 
 export default function App() {
@@ -49,6 +50,7 @@ export default function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignUpPage />} />
         <Route path="/product/:id" element={<ProductDetail />} />
+        <Route path="/qna/write" element={<QnAWritePage />} />
       </Routes>
     </BrowserRouter>
   );

@@ -4,6 +4,7 @@ import {
   MagnifyingGlassIcon,
   ShoppingBagIcon,
 } from '@heroicons/react/24/outline';
+import { Link } from 'react-router-dom';
 
 const categories = ['NEW', 'BEST', 'SALE', '봄/가을', '여름', '겨울'];
 
@@ -18,7 +19,7 @@ export default function Navbar({ onBurgerClick }) {
             <Bars3Icon className="h-6 w-6" />
           </button>
           {/* Logo */}
-          <span className="text-base font-bold">HABLE</span>
+          <Link to="/" className="text-base font-bold">HABLE</Link>
           {/* Icons */}
           <div className="flex space-x-4">
             <button className="p-2 focus:outline-none">
