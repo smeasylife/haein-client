@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { XMarkIcon } from '@heroicons/react/24/outline';
+import { XMarkIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 
 const popularSearches = ['크로스백', '넥크리스', '브레이슬릿', '봄 자켓', '세일'];
 
@@ -11,9 +11,12 @@ const SearchComponent = ({ onClose }) => {
         <input
           type="text"
           placeholder="검색어를 입력하세요"
-          className="w-full bg-transparent focus:outline-none text-lg"
+          className="w-full bg-transparent focus:outline-none text-lg border-b border-black pb-1"
           autoFocus
         />
+        <button className="p-2">
+          <MagnifyingGlassIcon className="h-6 w-6" />
+        </button>
         <button onClick={onClose} className="p-2">
           <XMarkIcon className="h-6 w-6" />
         </button>
