@@ -11,6 +11,7 @@ import products from './products';
 import ProductDetail from './pages/ProductDetail';
 import QnAWritePage from './pages/QnAWritePage';
 import CartPage from './pages/CartPage';
+import OrderPage from './pages/OrderPage'; // OrderPage import 추가
 import { CartProvider } from './context/CartContext';
 import './styles/App.css';
 
@@ -58,6 +59,7 @@ export default function App() {
           <Route path="/product/:id" element={<ProductDetail />} />
           <Route path="/qna/write" element={<QnAWritePage />} />
           <Route path="/cart" element={<CartPage />} />
+          <Route path="/order" element={<OrderPage />} /> {/* /order 경로 추가 */}
         </Routes>
       </BrowserRouter>
     </CartProvider>

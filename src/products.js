@@ -15,7 +15,8 @@ const products = [
     name: "브레드 레더 크로스백",
     originalPrice: 32000,
     price: 29000,
-    colors: ["#222"],
+    colors: ["Black", "White", "Beige"],
+    size: ["Small", "Medium", "Large"],
   },
   {
     image: image4,
