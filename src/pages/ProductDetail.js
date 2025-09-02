@@ -9,8 +9,9 @@ import DetailTab from '../components/DetailTab';
 import InfoTab from '../components/InfoTab';
 import QnATab from '../components/QnATab';
 import ReviewTab from '../components/ReviewTab';
+import PurchaseComponent from '../components/PurchaseComponent';
 import { initKakao } from '../utils/kakao';
-import kakaoIcon from '../assets/kakao.jpg'; // 카카오 아이콘 임포트
+import kakaoIcon from '../assets/kakao.jpg';
 
 export default function ProductDetail() {
   const { addToCart } = useContext(CartContext);
@@ -21,7 +22,8 @@ export default function ProductDetail() {
   const [menuOpen, setMenuOpen] = useState(false);
   const menuItems = ['NEW', 'BEST', 'SALE', '봄/가을', '여름', '겨울'];
   const [activeTab, setActiveTab] = useState('detail');
-  const [shareOpen, setShareOpen] = useState(false); // 공유 메뉴 상태
+  const [shareOpen, setShareOpen] = useState(false);
+  const [isPurchaseModalOpen, setPurchaseModalOpen] = useState(false);
 
   useEffect(() => {
     initKakao();
@@ -66,10 +68,7 @@ export default function ProductDetail() {
     setShareOpen(false);
   };
 
-  // 이미지 캐러셀 상태
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  // NOTE: 백엔드에서 여러 이미지 URL을 받는다고 가정합니다.
-  // product.imageUrls가 없으면 detailImages를, 그것도 없으면 기존 product.image를 배열로 사용합니다.
   const imageUrls = product.imageUrls || product.detailImages || [product.image];
 
   const goToPrevious = () => {
@@ -84,12 +83,6 @@ export default function ProductDetail() {
     );
   };
 
-  // 제품 객체에 아래 필드를 추가해 주세요:
-  // description: string[]
-  // size: string[]
-  // fabric: string
-  // information: string[]
-  // model: string
   if (!product) {
     return (
       <div className="p-6 text-center">
@@ -103,7 +96,9 @@ export default function ProductDetail() {
       </div>
     );
   }
-  // 예시: 상품 상세정보
+
+  const discountRate = product.originalPrice ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100) : 0;
+
   const {
     description = ['부드럽고 가벼운 촉감으로 편안한 숙면을 선사하는 고급 침구 세트입니다.',
   '사계절 내내 쾌적하게 사용할 수 있는 통기성 좋은 소재로 제작되었습니다.',
@@ -137,11 +132,7 @@ export default function ProductDetail() {
       />
 
       <div className="max-w-screen-lg mx-auto flex flex-col md:flex-row gap-8">
-        {/* ─────────────────────────────────────
-              1) 좌측: 커다란 상품 이미지 (슬라이드 캐러셀)
-        ───────────────────────────────────── */}
         <div className="md:w-1/2 relative shadow rounded-lg overflow-hidden">
-          {/* 이미지 슬라이드 컨테이너 */}
           <div
             className="flex transition-transform duration-500 ease-in-out"
             style={{ transform: `translateX(-${currentImageIndex * 100}%)` }}
@@ -155,8 +146,6 @@ export default function ProductDetail() {
               />
             ))}
           </div>
-
-          {/* 캐러셀 버튼 */}
           {imageUrls.length > 1 && (
             <>
               <button
@@ -181,17 +170,9 @@ export default function ProductDetail() {
           )}
         </div>
 
-        {/* ─────────────────────────────────────
-              2) 우측: 상세정보
-        ───────────────────────────────────── */}
         <div className="md:w-1/2 flex flex-col">
-          {/* 상품명 / 가격 */}
           <h1 className="text-3xl font-bold">{product.name}</h1>
-          <p className="text-2xl text-gray-800 mt-2">
-            {product.price.toLocaleString()}원
-          </p>
 
-          {/* 간단 설명 (bullet) */}
           {description.length > 0 && (
             <ul className="list-disc list-inside mt-4 text-gray-700 space-y-1">
               {description.map((line, i) => (
@@ -200,17 +181,13 @@ export default function ProductDetail() {
             </ul>
           )}
 
-          {/* 사이즈 정보 */}
           {size.length > 0 && (
             <div className="mt-6">
               <h2 className="font-semibold mb-1">Size</h2>
-              <p className="text-gray-600">
-                {size.join(' / ')} 
-              </p>
+              <p className="text-gray-600">{size.join(' / ')}</p>
             </div>
           )}
 
-          {/* 원단 정보 */}
           {fabric && (
             <div className="mt-4">
               <h2 className="font-semibold mb-1">Fabric</h2>
@@ -218,7 +195,6 @@ export default function ProductDetail() {
             </div>
           )}
 
-          {/* 기타 정보 */}
           {information.length > 0 && (
             <div className="mt-4">
               <h2 className="font-semibold mb-1">Information</h2>
@@ -226,7 +202,6 @@ export default function ProductDetail() {
             </div>
           )}
 
-          {/* 모델 스펙 */}
           {model && (
             <div className="mt-4">
               <h2 className="font-semibold mb-1">Model</h2>
@@ -234,22 +209,25 @@ export default function ProductDetail() {
             </div>
           )}
 
-          {/* 색상 선택 */}
-          <div className="mt-6">
-            <h2 className="font-semibold mb-2">Color</h2>
-            <div className="flex space-x-3">
-              {product.colors.map((c, i) => (
-                <button
-                  key={i}
-                  className="w-8 h-8 rounded-full border-2 transition-transform hover:scale-110"
-                  style={{ backgroundColor: c }}
-                />
-              ))}
+          <div className="flex-grow" />
+
+          <div className="mt-6 pt-4 border-t">
+            <div className="flex justify-end items-center gap-x-3">
+              {discountRate > 0 && (
+                <p className="text-2xl font-bold text-red-500">{discountRate}%</p>
+              )}
+              {product.originalPrice && (
+                <p className="text-lg text-gray-400 line-through">
+                  {product.originalPrice.toLocaleString()}원
+                </p>
+              )}
             </div>
+            <p className="text-right text-3xl font-extrabold text-gray-800 mt-1">
+              {product.price.toLocaleString()}원
+            </p>
           </div>
 
-          {/* 장바구니 / 구매하기 / 공유 버튼 */}
-          <div className="mt-8 flex items-stretch gap-2">
+          <div className="mt-4 flex items-stretch gap-2">
             <div className="grid grid-cols-2 gap-4 flex-grow">
               <button
                 className="w-full h-full py-3 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition"
@@ -262,7 +240,7 @@ export default function ProductDetail() {
               </button>
               <button
                 className="w-full h-full py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition"
-                onClick={() => alert('구매하기 로직을 여기에…')}
+                onClick={() => setPurchaseModalOpen(true)}
               >
                 구매하기
               </button>
@@ -278,9 +256,7 @@ export default function ProductDetail() {
                 </svg>
               </button>
               {shareOpen && (
-                <div
-                  className="absolute bottom-full right-0 mb-2 w-48 bg-white border rounded-lg shadow-xl z-10 overflow-hidden"
-                >
+                <div className="absolute bottom-full right-0 mb-2 w-48 bg-white border rounded-lg shadow-xl z-10 overflow-hidden">
                   <button
                     onClick={shareOnKakao}
                     className="w-full text-left px-4 py-3 text-sm text-gray-800 hover:bg-gray-100 flex items-center gap-3 transition-colors"
@@ -303,6 +279,7 @@ export default function ProductDetail() {
           </div>
         </div>
       </div>
+
       <div className="max-w-screen-lg mx-auto mt-10">
         <div className="flex border-b">
           {[
@@ -331,6 +308,13 @@ export default function ProductDetail() {
           {activeTab === 'review' && <ReviewTab reviews={reviewList} />}
         </div>
       </div>
+
+      {isPurchaseModalOpen && (
+        <PurchaseComponent
+          product={product}
+          onClose={() => setPurchaseModalOpen(false)}
+        />
+      )}
     </main>
   );
 }
