@@ -11,6 +11,7 @@ import image9 from "./assets/image9.jpg";
 const products = [
   {
     image: image1,
+    imageUrls: [image1, image2, image3, image5, image6],
     name: "브레드 레더 크로스백",
     originalPrice: 32000,
     price: 29000,

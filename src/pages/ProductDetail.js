@@ -1,5 +1,5 @@
 // src/pages/ProductDetail.js
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { CartContext } from '../context/CartContext';
 import { useParams, useNavigate } from 'react-router-dom';
 import products from '../products';
@@ -9,6 +9,8 @@ import DetailTab from '../components/DetailTab';
 import InfoTab from '../components/InfoTab';
 import QnATab from '../components/QnATab';
 import ReviewTab from '../components/ReviewTab';
+import { initKakao } from '../utils/kakao';
+import kakaoIcon from '../assets/kakao.jpg'; // 카카오 아이콘 임포트
 
 export default function ProductDetail() {
   const { addToCart } = useContext(CartContext);
@@ -19,6 +21,68 @@ export default function ProductDetail() {
   const [menuOpen, setMenuOpen] = useState(false);
   const menuItems = ['NEW', 'BEST', 'SALE', '봄/가을', '여름', '겨울'];
   const [activeTab, setActiveTab] = useState('detail');
+  const [shareOpen, setShareOpen] = useState(false); // 공유 메뉴 상태
+
+  useEffect(() => {
+    initKakao();
+  }, []);
+
+  const handleCopyLink = () => {
+    navigator.clipboard.writeText(window.location.href)
+      .then(() => {
+        alert('링크가 클립보드에 복사되었습니다.');
+      })
+      .catch(err => {
+        console.error('Failed to copy: ', err);
+        alert('링크 복사에 실패했습니다.');
+      });
+    setShareOpen(false);
+  };
+
+  const shareOnKakao = () => {
+    if (window.Kakao && product) {
+      window.Kakao.Link.sendDefault({
+        objectType: 'feed',
+        content: {
+          title: product.name,
+          description: `${product.price.toLocaleString()}원`,
+          imageUrl: product.image,
+          link: {
+            mobileWebUrl: window.location.href,
+            webUrl: window.location.href,
+          },
+        },
+        buttons: [
+          {
+            title: '상품 보러가기',
+            link: {
+              mobileWebUrl: window.location.href,
+              webUrl: window.location.href,
+            },
+          },
+        ],
+      });
+    }
+    setShareOpen(false);
+  };
+
+  // 이미지 캐러셀 상태
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  // NOTE: 백엔드에서 여러 이미지 URL을 받는다고 가정합니다.
+  // product.imageUrls가 없으면 detailImages를, 그것도 없으면 기존 product.image를 배열로 사용합니다.
+  const imageUrls = product.imageUrls || product.detailImages || [product.image];
+
+  const goToPrevious = () => {
+    setCurrentImageIndex(prevIndex =>
+      prevIndex === 0 ? imageUrls.length - 1 : prevIndex - 1
+    );
+  };
+
+  const goToNext = () => {
+    setCurrentImageIndex(prevIndex =>
+      (prevIndex + 1) % imageUrls.length
+    );
+  };
 
   // 제품 객체에 아래 필드를 추가해 주세요:
   // description: string[]
@@ -74,14 +138,47 @@ export default function ProductDetail() {
 
       <div className="max-w-screen-lg mx-auto flex flex-col md:flex-row gap-8">
         {/* ─────────────────────────────────────
-              1) 좌측: 커다란 상품 이미지
+              1) 좌측: 커다란 상품 이미지 (슬라이드 캐러셀)
         ───────────────────────────────────── */}
-        <div className="md:w-1/2">
-          <img
-            src={product.image}
-            alt={product.name}
-            className="w-full h-auto object-cover rounded-lg shadow"
-          />
+        <div className="md:w-1/2 relative shadow rounded-lg overflow-hidden">
+          {/* 이미지 슬라이드 컨테이너 */}
+          <div
+            className="flex transition-transform duration-500 ease-in-out"
+            style={{ transform: `translateX(-${currentImageIndex * 100}%)` }}
+          >
+            {imageUrls.map((url, index) => (
+              <img
+                key={index}
+                src={url}
+                alt={`${product.name} ${index + 1}`}
+                className="w-full h-auto object-cover flex-shrink-0"
+              />
+            ))}
+          </div>
+
+          {/* 캐러셀 버튼 */}
+          {imageUrls.length > 1 && (
+            <>
+              <button
+                onClick={goToPrevious}
+                className="absolute top-1/2 left-2 transform -translate-y-1/2 bg-white bg-opacity-60 rounded-full p-1.5 text-gray-800 hover:bg-opacity-80 transition-all duration-300 ease-in-out hover:scale-110"
+                aria-label="Previous image"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+              </button>
+              <button
+                onClick={goToNext}
+                className="absolute top-1/2 right-2 transform -translate-y-1/2 bg-white bg-opacity-60 rounded-full p-1.5 text-gray-800 hover:bg-opacity-80 transition-all duration-300 ease-in-out hover:scale-110"
+                aria-label="Next image"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+            </>
+          )}
         </div>
 
         {/* ─────────────────────────────────────
@@ -151,23 +248,58 @@ export default function ProductDetail() {
             </div>
           </div>
 
-          {/* 장바구니 / 구매하기 버튼 */}
-          <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <button
-              className="w-full py-3 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition"
-              onClick={() => {
-                addToCart(product);
-                alert(`${product.name}이(가) 장바구니에 담겼습니다.`);
-              }}
-            >
-              장바구니 담기
-            </button>
-            <button
-              className="w-full py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition"
-              onClick={() => alert('구매하기 로직을 여기에…')}
-            >
-              구매하기
-            </button>
+          {/* 장바구니 / 구매하기 / 공유 버튼 */}
+          <div className="mt-8 flex items-stretch gap-2">
+            <div className="grid grid-cols-2 gap-4 flex-grow">
+              <button
+                className="w-full h-full py-3 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition"
+                onClick={() => {
+                  addToCart(product);
+                  alert(`${product.name}이(가) 장바구니에 담겼습니다.`);
+                }}
+              >
+                장바구니 담기
+              </button>
+              <button
+                className="w-full h-full py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition"
+                onClick={() => alert('구매하기 로직을 여기에…')}
+              >
+                구매하기
+              </button>
+            </div>
+            <div className="relative">
+              <button
+                onClick={() => setShareOpen(prev => !prev)}
+                className="p-3 h-full border rounded-lg hover:bg-gray-100 transition flex items-center justify-center"
+                aria-label="Share product"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8m-4-6l-4-4-4 4m4-4v12" />
+                </svg>
+              </button>
+              {shareOpen && (
+                <div
+                  className="absolute bottom-full right-0 mb-2 w-48 bg-white border rounded-lg shadow-xl z-10 overflow-hidden"
+                >
+                  <button
+                    onClick={shareOnKakao}
+                    className="w-full text-left px-4 py-3 text-sm text-gray-800 hover:bg-gray-100 flex items-center gap-3 transition-colors"
+                  >
+                    <img src={kakaoIcon} alt="Kakao" className="w-5 h-5" />
+                    <span>카카오톡으로 공유</span>
+                  </button>
+                  <button
+                    onClick={handleCopyLink}
+                    className="w-full text-left px-4 py-3 text-sm text-gray-800 hover:bg-gray-100 flex items-center gap-3 transition-colors"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                    </svg>
+                    <span>링크 복사</span>
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
