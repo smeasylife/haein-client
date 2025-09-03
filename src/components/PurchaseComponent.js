@@ -2,33 +2,61 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 export default function PurchaseComponent({ product, onClose }) {
-  // product.colors가 존재하고 비어있지 않은지 확인, 그렇지 않으면 null 또는 기본값 설정
+
   const [selectedColor, setSelectedColor] = useState(product.colors && product.colors.length > 0 ? product.colors[0] : null);
-  // product.size에 대한 유사한 확인
   const [selectedSize, setSelectedSize] = useState(product.size && product.size.length > 0 ? product.size[0] : null);
   const [quantity, setQuantity] = useState(1);
   const [animation, setAnimation] = useState('animate-slide-up');
   const navigate = useNavigate();
 
+  const userCoupons = [
+    { id: '0', name: '쿠폰 선택 안 함', discount: 0 },
+    { id: '1', name: '10% 할인 쿠폰', discount: 0.1 },
+    { id: '2', name: '5,000원 할인 쿠폰', discount: 5000 },
+  ];
+  const userPoints = 10000;
+
+  const [selectedCouponId, setSelectedCouponId] = useState('0');
+  const [pointsToUse, setPointsToUse] = useState('');
+
   useEffect(() => {
-    // 컴포넌트가 나타날 때 body 스크롤을 막습니다.
     document.body.style.overflow = 'hidden';
     return () => {
-      // 컴포넌트가 사라질 때 body 스크롤을 복원합니다.
       document.body.style.overflow = 'unset';
     };
   }, []);
 
   const handleClose = () => {
     setAnimation('animate-slide-down');
-    setTimeout(onClose, 300); // 애니메이션 시간과 일치
+    setTimeout(onClose, 300);
   };
 
   const handleQuantityChange = (amount) => {
     setQuantity(prev => Math.max(1, prev + amount));
   };
 
-  const totalPrice = product.price * quantity;
+  const basePrice = product.price * quantity;
+  const maxPoints = Math.floor(basePrice * 0.05);
+  const selectedCoupon = userCoupons.find(c => c.id === selectedCouponId);
+
+  let discount = 0;
+  if (selectedCoupon) {
+    if (selectedCoupon.discount < 1 && selectedCoupon.discount > 0) {
+      discount = basePrice * selectedCoupon.discount;
+    } else {
+      discount = selectedCoupon.discount;
+    }
+  }
+
+  const handlePointsChange = (e) => {
+    const value = e.target.value.replace(/[^0-9]/g, '');
+    const numValue = parseInt(value, 10) || 0;
+    const effectiveMaxPoints = Math.min(userPoints, maxPoints);
+    setPointsToUse(Math.min(numValue, effectiveMaxPoints).toString());
+  };
+
+  const usedPoints = parseInt(pointsToUse, 10) || 0;
+  const finalPrice = basePrice - discount - usedPoints;
 
   const handlePurchase = () => {
     if (!selectedColor) {
@@ -39,14 +67,17 @@ export default function PurchaseComponent({ product, onClose }) {
       alert('사이즈를 선택해주세요.');
       return;
     }
-    // TODO: 주문 페이지 구현 필요
     navigate('/order', {
       state: {
         product,
         selectedColor,
         selectedSize,
         quantity,
-        totalPrice,
+        totalPrice: finalPrice,
+        discountDetails: {
+          coupon: selectedCoupon,
+          pointsUsed: usedPoints
+        }
       },
     });
   };
@@ -56,10 +87,11 @@ export default function PurchaseComponent({ product, onClose }) {
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-end" onClick={handleClose}>
       <div
-        className={`w-full max-w-screen-lg mx-auto bg-white rounded-t-2xl p-6 ${animation}`}
+        className={`w-full max-w-screen-lg mx-auto bg-white rounded-t-2xl ${animation} flex flex-col`}
+        style={{ maxHeight: '90vh' }} // Set a max height
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex justify-between items-center mb-6">
+        <div className="flex justify-between items-center p-6 border-b">
           <h2 className="text-xl font-bold">옵션 선택</h2>
           <button onClick={handleClose} className="text-gray-400 hover:text-gray-800">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -68,61 +100,96 @@ export default function PurchaseComponent({ product, onClose }) {
           </button>
         </div>
 
-        {/* 선택된 옵션 요약 (있을 경우) */}
-        <div className="space-y-3 bg-gray-50 p-4 rounded-lg mb-6">
-            <div className="flex justify-between items-center">
-                <div className="flex-grow">
-                    <p className="font-semibold text-sm">{product.name}</p>
-                    <p className="text-xs text-gray-500">색상: {selectedColor} / 사이즈: {selectedSize}</p>
-                </div>
-                <div className="flex items-center border rounded-md bg-white">
-                    <button onClick={() => handleQuantityChange(-1)} className="px-3 py-1 text-lg text-gray-600 hover:bg-gray-100 rounded-l-md">-</button>
-                    <span className="px-4 py-1 text-center text-sm font-medium">{quantity}</span>
-                    <button onClick={() => handleQuantityChange(1)} className="px-3 py-1 text-lg text-gray-600 hover:bg-gray-100 rounded-r-md">+</button>
-                </div>
-                <p className="text-right font-bold text-sm w-24">{(product.price * quantity).toLocaleString()}원</p>
-            </div>
-        </div>
+        <div className="overflow-y-auto p-6 flex-grow">
+          <div className="space-y-3 bg-gray-50 p-4 rounded-lg mb-6">
+              <div className="flex justify-between items-center">
+                  <div className="flex-grow">
+                      <p className="font-semibold text-sm">{product.name}</p>
+                      <p className="text-xs text-gray-500">색상: {selectedColor} / 사이즈: {selectedSize}</p>
+                  </div>
+                  <div className="flex items-center border rounded-md bg-white">
+                      <button onClick={() => handleQuantityChange(-1)} className="px-3 py-1 text-lg text-gray-600 hover:bg-gray-100 rounded-l-md">-</button>
+                      <span className="px-4 py-1 text-center text-sm font-medium">{quantity}</span>
+                      <button onClick={() => handleQuantityChange(1)} className="px-3 py-1 text-lg text-gray-600 hover:bg-gray-100 rounded-r-md">+</button>
+                  </div>
+                  <p className="text-right font-bold text-sm w-24">{basePrice.toLocaleString()}원</p>
+              </div>
+          </div>
 
-        {/* Color Options */}
-        <div className="mb-4">
-          <h4 className="font-semibold mb-3 text-gray-800">색상</h4>
-          <div className="flex flex-wrap gap-2">
-            {product.colors.map(color => (
-              <button
-                key={color}
-                onClick={() => setSelectedColor(color)}
-                className={`px-4 py-2 rounded-md text-sm border-2 transition-all duration-200 ${selectedColor === color ? 'border-black font-semibold' : 'border-gray-200 text-gray-600'}`}
+          <div className="grid md:grid-cols-2 gap-6 mb-6">
+            <div>
+              <h4 className="font-semibold mb-3 text-gray-800">색상</h4>
+              <div className="flex flex-wrap gap-2">
+                {product.colors.map(color => (
+                  <button
+                    key={color}
+                    onClick={() => setSelectedColor(color)}
+                    className={`px-4 py-2 rounded-md text-sm border-2 transition-all duration-200 ${selectedColor === color ? 'border-black font-semibold' : 'border-gray-200 text-gray-600'}`}
+                  >
+                    {color} 
+                  </button>
+                ))}
+              </div>
+            </div>
+            {product.size && (
+              <div>
+                <h4 className="font-semibold mb-3 text-gray-800">사이즈</h4>
+                <div className="flex flex-wrap gap-2">
+                  {product.size.map(s => (
+                    <button
+                      key={s}
+                      onClick={() => setSelectedSize(s)}
+                      className={`px-4 py-2 rounded-md text-sm border-2 transition-all duration-200 ${selectedSize === s ? 'border-black font-semibold' : 'border-gray-200 text-gray-600'}`}
+                    >
+                      {s}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+
+          <div className="border-t pt-6 space-y-4">
+            <div>
+              <h4 className="font-semibold mb-2 text-gray-800">쿠폰 할인</h4>
+              <select 
+                value={selectedCouponId}
+                onChange={e => setSelectedCouponId(e.target.value)}
+                className="w-full p-3 border rounded-md bg-gray-50"
               >
-                {color} 
-              </button>
-            ))}
+                {userCoupons.map(coupon => (
+                  <option key={coupon.id} value={coupon.id}>{coupon.name}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <h4 className="font-semibold mb-2 text-gray-800">적립금 사용</h4>
+              <div className="flex items-center gap-2">
+                <input 
+                  type="text" 
+                  value={pointsToUse}
+                  onChange={handlePointsChange}
+                  placeholder="0" 
+                  className="w-full p-3 border rounded-md"
+                />
+                <button 
+                  onClick={() => setPointsToUse(Math.min(userPoints, maxPoints).toString())} 
+                  className="px-4 py-3 bg-gray-200 text-gray-800 rounded-md whitespace-nowrap text-sm font-medium hover:bg-gray-300"
+                >
+                  전액사용
+                </button>
+              </div>
+              <p className="text-xs text-gray-500 mt-2">
+                사용 가능 적립금: {Math.min(userPoints, maxPoints).toLocaleString()}원 (보유: {userPoints.toLocaleString()}원)
+              </p>
+            </div>
           </div>
         </div>
 
-        {/* Size Options */}
-        {product.size && (
-          <div className="mb-8">
-            <h4 className="font-semibold mb-3 text-gray-800">사이즈</h4>
-            <div className="flex flex-wrap gap-2">
-              {product.size.map(s => (
-                <button
-                  key={s}
-                  onClick={() => setSelectedSize(s)}
-                  className={`px-4 py-2 rounded-md text-sm border-2 transition-all duration-200 ${selectedSize === s ? 'border-black font-semibold' : 'border-gray-200 text-gray-600'}`}
-                >
-                  {s}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Total Price & Purchase Button */}
-        <div className="flex justify-between items-center pt-4 border-t">
+        <div className="flex justify-between items-center p-6 border-t mt-auto">
           <div>
-            <p className="text-sm text-gray-600">총 상품 금액</p>
-            <p className="text-2xl font-bold text-red-500">{totalPrice.toLocaleString()}원</p>
+            <p className="text-sm text-gray-600">총 결제 금액</p>
+            <p className="text-3xl font-bold text-red-500">{finalPrice.toLocaleString()}원</p>
           </div>
           <button
             onClick={handlePurchase}
