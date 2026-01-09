@@ -16,7 +16,7 @@ const products = [
     originalPrice: 32000,
     price: 29000,
     colors: ["Black", "White", "Beige"],
-    size: ["Small", "Medium", "Large"],
+    sizes: ["Small", "Medium", "Large"],
   },
   {
     image: image4,
@@ -24,6 +24,7 @@ const products = [
     originalPrice: 28000,
     price: 24000,
     colors: ["#000", "#fff"],
+    sizes: ["Free Size"],
   },
   {
     image: image7,
@@ -31,6 +32,7 @@ const products = [
     originalPrice: 12000,
     price: 10000,
     colors: ["#ccc"],
+    sizes: ["Free Size"],
   },
   {
     image: image9,
@@ -38,6 +40,7 @@ const products = [
     originalPrice: 32000,
     price: 29000,
     colors: ["#222"],
+    sizes: ["Small", "Medium", "Large"],
   },
   {
     image: image8,
@@ -45,6 +48,7 @@ const products = [
     originalPrice: 28000,
     price: 24000,
     colors: ["#000", "#fff"],
+    sizes: ["Free Size"],
   },
   {
     image: image3,
@@ -52,6 +56,7 @@ const products = [
     originalPrice: 12000,
     price: 10000,
     colors: ["#ccc"],
+    sizes: ["Free Size"],
   },
   {
     image: image1,
@@ -59,6 +64,7 @@ const products = [
     originalPrice: 32000,
     price: 29000,
     colors: ["#222"],
+    sizes: ["Small", "Medium", "Large"],
   },
   {
     image: image2,
@@ -66,6 +72,7 @@ const products = [
     originalPrice: 28000,
     price: 24000,
     colors: ["#000", "#fff"],
+    sizes: ["Free Size"],
   },
   {
     image: image9,
@@ -73,8 +80,8 @@ const products = [
     originalPrice: 12000,
     price: 10000,
     colors: ["#ccc"],
+    sizes: ["50x50", "60x60"],
   }
-
 ];
 
 export default products;

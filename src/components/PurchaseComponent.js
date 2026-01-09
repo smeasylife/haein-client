@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 export default function PurchaseComponent({ product, onClose }) {
 
   const [selectedColor, setSelectedColor] = useState(product.colors && product.colors.length > 0 ? product.colors[0] : null);
-  const [selectedSize, setSelectedSize] = useState(product.size && product.size.length > 0 ? product.size[0] : null);
+  const [selectedSize, setSelectedSize] = useState(product.sizes && product.sizes.length > 0 ? product.sizes[0] : null);
   const [quantity, setQuantity] = useState(1);
   const [animation, setAnimation] = useState('animate-slide-up');
   const navigate = useNavigate();
@@ -64,7 +64,7 @@ export default function PurchaseComponent({ product, onClose }) {
       alert('색상을 선택해주세요.');
       return;
     }
-    if (product.size && product.size.length > 0 && !selectedSize) {
+    if (product.sizes && product.sizes.length > 0 && !selectedSize) {
       alert('사이즈를 선택해주세요.');
       return;
     }
@@ -103,22 +103,24 @@ export default function PurchaseComponent({ product, onClose }) {
 
         <div className="overflow-y-auto p-6 flex-grow">
           <div className="space-y-3 bg-gray-50 p-4 rounded-lg mb-6">
-              <div className="flex justify-between items-center">
-                  <div className="flex-grow">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                  <div className="flex-grow w-full sm:w-auto">
                       <p className="font-semibold text-sm">{product.name}</p>
                       <p className="text-xs text-gray-500">
-    {selectedColor && `색상: ${selectedColor}`}
-    {selectedColor && selectedSize && ' / '}
-    {selectedSize && `사이즈: ${selectedSize}`}
-    {!selectedColor && !selectedSize && '기본 옵션'}
+{selectedColor && `색상: ${selectedColor}`}
+{selectedColor && selectedSize && ' / '}
+{selectedSize && `사이즈: ${selectedSize}`}
+{!selectedColor && !selectedSize && '기본 옵션'}
 </p>
                   </div>
-                  <div className="flex items-center border rounded-md bg-white">
-                      <button onClick={() => handleQuantityChange(-1)} className="px-3 py-1 text-lg text-gray-600 hover:bg-gray-100 rounded-l-md">-</button>
-                      <span className="px-4 py-1 text-center text-sm font-medium">{quantity}</span>
-                      <button onClick={() => handleQuantityChange(1)} className="px-3 py-1 text-lg text-gray-600 hover:bg-gray-100 rounded-r-md">+</button>
+                  <div className="flex items-center justify-between w-full sm:w-auto gap-3">
+                      <div className="flex items-center border rounded-md bg-white">
+                          <button onClick={() => handleQuantityChange(-1)} className="px-3 py-1 text-lg text-gray-600 hover:bg-gray-100 rounded-l-md">-</button>
+                          <span className="px-4 py-1 text-center text-sm font-medium">{quantity}</span>
+                          <button onClick={() => handleQuantityChange(1)} className="px-3 py-1 text-lg text-gray-600 hover:bg-gray-100 rounded-r-md">+</button>
+                      </div>
+                      <p className="text-right font-bold text-sm">{basePrice.toLocaleString()}원</p>
                   </div>
-                  <p className="text-right font-bold text-sm w-24">{basePrice.toLocaleString()}원</p>
               </div>
           </div>
 
@@ -139,11 +141,11 @@ export default function PurchaseComponent({ product, onClose }) {
                 </div>
               </div>
             )}
-            {product.size && product.size.length > 0 && (
+            {product.sizes && product.sizes.length > 0 && (
               <div>
                 <h4 className="font-semibold mb-3 text-gray-800">사이즈</h4>
                 <div className="flex flex-wrap gap-2">
-                  {product.size.map(s => (
+                  {product.sizes.map(s => (
                     <button
                       key={s}
                       onClick={() => setSelectedSize(s)}
