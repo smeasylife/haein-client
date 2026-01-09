@@ -59,11 +59,12 @@ export default function PurchaseComponent({ product, onClose }) {
   const finalPrice = basePrice - discount - usedPoints;
 
   const handlePurchase = () => {
-    if (!selectedColor) {
+    // 옵션이 있는 경우에만 검증
+    if (product.colors && product.colors.length > 0 && !selectedColor) {
       alert('색상을 선택해주세요.');
       return;
     }
-    if (!selectedSize) {
+    if (product.size && product.size.length > 0 && !selectedSize) {
       alert('사이즈를 선택해주세요.');
       return;
     }
@@ -105,7 +106,12 @@ export default function PurchaseComponent({ product, onClose }) {
               <div className="flex justify-between items-center">
                   <div className="flex-grow">
                       <p className="font-semibold text-sm">{product.name}</p>
-                      <p className="text-xs text-gray-500">색상: {selectedColor} / 사이즈: {selectedSize}</p>
+                      <p className="text-xs text-gray-500">
+    {selectedColor && `색상: ${selectedColor}`}
+    {selectedColor && selectedSize && ' / '}
+    {selectedSize && `사이즈: ${selectedSize}`}
+    {!selectedColor && !selectedSize && '기본 옵션'}
+</p>
                   </div>
                   <div className="flex items-center border rounded-md bg-white">
                       <button onClick={() => handleQuantityChange(-1)} className="px-3 py-1 text-lg text-gray-600 hover:bg-gray-100 rounded-l-md">-</button>
@@ -117,10 +123,11 @@ export default function PurchaseComponent({ product, onClose }) {
           </div>
 
           <div className="grid md:grid-cols-2 gap-6 mb-6">
-            <div>
-              <h4 className="font-semibold mb-3 text-gray-800">색상</h4>
-              <div className="flex flex-wrap gap-2">
-                {product.colors.map(color => (
+            {product.colors && product.colors.length > 0 && (
+              <div>
+                <h4 className="font-semibold mb-3 text-gray-800">색상</h4>
+                <div className="flex flex-wrap gap-2">
+                  {product.colors.map(color => (
                   <button
                     key={color}
                     onClick={() => setSelectedColor(color)}
@@ -129,9 +136,10 @@ export default function PurchaseComponent({ product, onClose }) {
                     {color} 
                   </button>
                 ))}
+                </div>
               </div>
-            </div>
-            {product.size && (
+            )}
+            {product.size && product.size.length > 0 && (
               <div>
                 <h4 className="font-semibold mb-3 text-gray-800">사이즈</h4>
                 <div className="flex flex-wrap gap-2">

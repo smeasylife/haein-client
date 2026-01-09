@@ -69,15 +69,16 @@ export default function ProductDetail() {
   };
 
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const imageUrls = product.imageUrls || product.detailImages || [product.image];
 
   const goToPrevious = () => {
+    const imageUrls = product?.imageUrls || product?.detailImages || (product ? [product.image] : []);
     setCurrentImageIndex(prevIndex =>
       prevIndex === 0 ? imageUrls.length - 1 : prevIndex - 1
     );
   };
 
   const goToNext = () => {
+    const imageUrls = product?.imageUrls || product?.detailImages || (product ? [product.image] : []);
     setCurrentImageIndex(prevIndex =>
       (prevIndex + 1) % imageUrls.length
     );
@@ -121,6 +122,9 @@ export default function ProductDetail() {
   const contactInfo  = product.contactInfo  || 'cs@haein.co.kr';
   const qnaList      = product.qnaList      || [];
   const reviewList   = product.reviewList   || [];
+  
+  // product가 존재하므로 안전하게 imageUrls 정의
+  const imageUrls = product.imageUrls || product.detailImages || [product.image];
 
   return (
     <main className="min-h-screen bg-white px-4 md:px-8 pt-20 pb-10">

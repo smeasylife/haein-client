@@ -10,7 +10,6 @@ export default function LoginPage() {
   useEffect(() => {
     initKakao(); // SDK 초기화
   }, []);
-  console.log(kakao);
 
   const handleKakaoLogin = async () => {
     try {
