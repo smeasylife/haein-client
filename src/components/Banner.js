@@ -1,6 +1,4 @@
-
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import image1 from '../assets/image1.jpg';
 import image2 from '../assets/image2.jpg';
 import image3 from '../assets/image3.jpg';
@@ -9,63 +7,72 @@ import image5 from '../assets/image5.jpg';
 
 const images = [image1, image2, image3, image4, image5];
 
-const variants = {
-  enter: (direction) => {
-    return {
-      x: direction > 0 ? 1000 : -1000,
-      opacity: 0
-    };
-  },
-  center: {
-    zIndex: 1,
-    x: 0,
-    opacity: 1
-  },
-  exit: (direction) => {
-    return {
-      zIndex: 0,
-      x: direction < 0 ? 1000 : -1000,
-      opacity: 0
-    };
-  }
-};
-
 const Banner = () => {
-  const [[page, direction], setPage] = useState([0, 0]);
+  // 무한 스크롤을 위해 앞뒤에 이미지 복제
+  const extendedImages = [images[images.length - 1], ...images, images[0]];
+  const [page, setPage] = useState(1);
+  const [isTransitioning, setIsTransitioning] = useState(true);
 
-  const paginate = (newDirection) => {
-    setPage([(page + newDirection + images.length) % images.length, newDirection]);
+  const handleTransitionEnd = () => {
+    // 마지막 복제 이미지에 도달하면 진짜 첫 번째로 점프
+    if (page === extendedImages.length - 1) {
+      setIsTransitioning(false);
+      setPage(1);
+      setTimeout(() => setIsTransitioning(true), 50);
+    }
+    // 첫 번째 복제 이미지에 도달하면 진짜 마지막으로 점프
+    else if (page === 0) {
+      setIsTransitioning(false);
+      setPage(images.length);
+      setTimeout(() => setIsTransitioning(true), 50);
+    }
   };
 
   useEffect(() => {
-    const timer = setTimeout(() => paginate(1), 3000);
-    return () => clearTimeout(timer);
-  }, [page]);
+    const timer = setInterval(() => {
+      setPage((prev) => prev + 1);
+    }, 4000);
+    return () => clearInterval(timer);
+  }, []);
+
+  // 인디케이터를 위한 현재 페이지 계산
+  const getCurrentPage = () => {
+    if (page === 0) return images.length - 1;
+    if (page === extendedImages.length - 1) return 0;
+    return page - 1;
+  };
 
   return (
-    <div className="relative w-full h-96 overflow-hidden">
-      <AnimatePresence initial={false} custom={direction}>
-        <motion.img
-          key={page}
-          src={images[page]}
-          custom={direction}
-          variants={variants}
-          initial="enter"
-          animate="center"
-          exit="exit"
-          transition={{
-            x: { type: "spring", stiffness: 300, damping: 30 },
-            opacity: { duration: 0.2 }
-          }}
-          className="absolute w-full h-full object-cover"
-        />
-      </AnimatePresence>
-      <div className="absolute bottom-4 w-full flex justify-center space-x-2 z-10">
+    <div className="relative w-full h-[500px] md:h-[600px] overflow-hidden">
+      {/* 이미지 슬라이더 - 무한 스크롤 */}
+      <div
+        className={`flex h-full ${isTransitioning ? 'transition-transform duration-500 ease-in-out' : ''}`}
+        style={{ transform: `translateX(-${page * 100}%)` }}
+        onTransitionEnd={handleTransitionEnd}
+      >
+        {extendedImages.map((image, index) => (
+          <div key={index} className="min-w-full h-full">
+            <img
+              src={image}
+              alt={`banner-${index}`}
+              className="w-full h-full object-cover"
+            />
+          </div>
+        ))}
+      </div>
+
+      {/* 인디케이터 (점) */}
+      <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2 z-10">
         {images.map((_, i) => (
-          <div
+          <button
             key={i}
-            className={`w-3 h-3 rounded-full cursor-pointer ${page === i ? 'bg-white' : 'bg-gray-400'}`}
-            onClick={() => setPage([i, i > page ? 1 : -1])}
+            onClick={() => {
+              setIsTransitioning(true);
+              setPage(i + 1);
+            }}
+            className={`w-3 h-3 rounded-full transition-colors ${
+              getCurrentPage() === i ? 'bg-white' : 'bg-white/50 hover:bg-white/70'
+            }`}
           />
         ))}
       </div>
