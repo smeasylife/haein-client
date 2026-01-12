@@ -24,7 +24,6 @@ const QnAWritePage = () => {
       <HamburgerMenu
         isOpen={menuOpen}
         onClose={() => setMenuOpen(false)}
-        menuItems={menuItems}
       />
       <div className="w-full max-w-screen-lg mx-auto p-4 pt-20">
         <h2 className="text-2xl font-bold mb-6 text-center">문의하기</h2>

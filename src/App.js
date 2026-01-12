@@ -17,37 +17,57 @@ import './styles/App.css';
 
 export default function App() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const menuItems = ['NEW', 'BEST', 'SALE', '봄/가을', '여름', '겨울'];
 
   // 홈페이지 메인 콘텐츠를 렌더링하는 컴포넌트
-  const Home = () => (
-    <main className="min-h-screen bg-white pt-20 pb-10">
-      <Banner />
-      <section className="max-w-screen-lg mx-auto px-3 pt-3 pb-10">
-      <Navbar onBurgerClick={() => setMenuOpen(true)} />
-      <HamburgerMenu
-        isOpen={menuOpen}
-        onClose={() => setMenuOpen(false)}
-        menuItems={menuItems}
-      />
+  const Home = () => {
+    const categorySections = [
+      { title: '신상품', category: 'NEW' },
+      { title: '인기상품', category: 'BEST' },
+      { title: '세일상품', category: 'SALE' },
+      { title: '봄/가을', category: '봄/가을' },
+      { title: '여름', category: '여름' },
+      { title: '겨울', category: '겨울' },
+    ];
 
-      {/* 기본 2열, md부터 3열 */}
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-6 items-start">
-        {products.map((product, idx) => (
-        <ProductCard
-          key={idx}
-          index={idx}
-         image={product.image}
-         name={product.name}
-         originalPrice={product.originalPrice}
-          price={product.price}
-          colors={product.colors}
-       />
-      ))}
-      </div>
-      </section>
-    </main>
-  );
+    return (
+      <main className="min-h-screen bg-white pt-20 pb-10">
+        <Navbar onBurgerClick={() => setMenuOpen(true)} />
+        <HamburgerMenu
+          isOpen={menuOpen}
+          onClose={() => setMenuOpen(false)}
+        />
+
+        <Banner />
+
+        {categorySections.map((section) => {
+          const filteredProducts = products.filter(
+            (product) => product.category === section.category
+          );
+
+          if (filteredProducts.length === 0) return null;
+
+          return (
+            <section key={section.category} className="max-w-screen-lg mx-auto px-3 py-10">
+              <h2 className="text-2xl font-bold mb-6">{section.title}</h2>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
+                {filteredProducts.map((product) => (
+                  <ProductCard
+                    key={product.id}
+                    index={product.id}
+                    image={product.image}
+                    name={product.name}
+                    originalPrice={product.originalPrice}
+                    price={product.price}
+                    colors={product.colors}
+                  />
+                ))}
+              </div>
+            </section>
+          );
+        })}
+      </main>
+    );
+  };
 
   return (
     <CartProvider>

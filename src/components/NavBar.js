@@ -7,8 +7,6 @@ import {
 import { Link } from 'react-router-dom';
 import SearchComponent from './SearchComponent';
 
-const categories = ['NEW', 'BEST', 'SALE', '봄/가을', '여름', '겨울'];
-
 export default function Navbar({ onBurgerClick }) {
   const [showSearch, setShowSearch] = useState(false);
 
@@ -46,19 +44,7 @@ export default function Navbar({ onBurgerClick }) {
             </div>
           </div>
 
-          {/* Category Bar */}
-          <div className="bg-white backdrop-blur-sm">
-            <nav className="flex justify-center space-x-6 w-full px-4 py-1 overflow-x-auto">
-              {categories.map((item) => (
-                <button
-                  key={item}
-                  className="relative pb-1 text-xs stext-black whitespace-nowrap focus:outline-none"
-                >
-                  {item}
-                </button>
-              ))}
-            </nav>
-          </div>
+
         </>
       )}
     </header>

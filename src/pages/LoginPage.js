@@ -6,6 +6,8 @@ import '../styles/kakao.css';
 
 export default function LoginPage() {
   const navigate = useNavigate();
+  const [email, setEmail] = React.useState('');
+  const [password, setPassword] = React.useState('');
 
   useEffect(() => {
     initKakao(); // SDK 초기화
@@ -25,6 +27,35 @@ export default function LoginPage() {
       navigate('/');
     } catch (err) {
       console.error('카카오 로그인 실패', err);
+    }
+  };
+
+  const handleLocalLogin = async (e) => {
+    e.preventDefault();
+    
+    try {
+      const formData = new URLSearchParams();
+      formData.append('email', email);
+      formData.append('password', password);
+
+      const response = await fetch('http://localhost:8080/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        credentials: 'include',
+        body: formData.toString(),
+      });
+
+      if (response.ok || response.redirected) {
+        alert('로그인 성공!');
+        navigate('/');
+      } else {
+        alert('로그인 실패: 아이디 또는 비밀번호를 확인해주세요.');
+      }
+    } catch (err) {
+      console.error('로그인 에러:', err);
+      alert('로그인 중 오류가 발생했습니다.');
     }
   };
 
@@ -64,7 +95,7 @@ export default function LoginPage() {
           </div>
 
           {/* Login Form */}
-          <form className="space-y-4">
+          <form className="space-y-4" onSubmit={handleLocalLogin}>
             <div>
               <label htmlFor="userId" className="block text-sm font-medium text-gray-700 mb-1">
                 아이디
@@ -74,6 +105,8 @@ export default function LoginPage() {
                 type="text"
                 className="w-full border border-gray-300 rounded px-3 py-2"
                 placeholder="아이디를 입력하세요"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
               />
             </div>
             <div>
@@ -85,6 +118,8 @@ export default function LoginPage() {
                 type="password"
                 className="w-full border border-gray-300 rounded px-3 py-2"
                 placeholder="비밀번호를 입력하세요"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
               />
             </div>
             <button

@@ -132,7 +132,6 @@ export default function ProductDetail() {
       <HamburgerMenu
         isOpen={menuOpen}
         onClose={() => setMenuOpen(false)}
-        menuItems={menuItems}
       />
 
       <div className="max-w-screen-lg mx-auto flex flex-col md:flex-row gap-8">
